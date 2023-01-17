@@ -11,11 +11,50 @@
       <h:form id="form">
         <p:messages />
         
-        <p:chart type="bar" model="#{chartView.tasksByState}"></p:chart>
+        <h2>All tasks by state (Primefaces + Java)</h2>
+        <p:barChart model="#{chartView.tasksByState}"></p:barChart>
         
-        <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-fluid" 
-          columnClasses="ui-g-12 ui-md-3 ui-lg-2, ui-g-12 ui-md-9 ui-lg-4, ui-g-12 ui-md-3 ui-lg-2, ui-g-12 ui-md-9 ui-lg-4">
+        <h2>All tasks by month by state (Primefaces + Java)</h2>
+         <p:barChart model="#{chartView.tasksByMonthAndState}"></p:barChart>
+        
 
+		<h2>All tasks by state (JS + Rest API)</h2>
+			<div>
+			  <canvas id="myChart" style="height:200px;"></canvas>
+			</div>
+
+
+<script>
+
+  const ctx = document.getElementById('myChart');
+  const userAction = async () => {
+  const response = await fetch('/designer/api/stats2');  
+  const myJson = await response.json();  
+  
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: myJson.states,
+      datasets: [{
+        label: '# Count',
+        data: myJson.counts,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
+userAction();
+
+  
+</script>
         </p:panelGrid>
         <br />
         <div class="command-btns">
