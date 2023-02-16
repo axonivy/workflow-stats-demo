@@ -28,17 +28,19 @@
 
   const ctx = document.getElementById('myChart');
   const userAction = async () => {
-  const response = await fetch('/designer/api/stats2');  
-  const myJson = await response.json();  
-  
+  var basePath = window.location.pathname;
+  basePath = basePath.substring(0, basePath.indexOf('/faces/')); 
+  const response = await fetch(basePath+'/api/workflow/tasks/stats?agg=state:bucket');  
+  const result = await response.json();  
+
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: myJson.states,
+      labels: result.map(bucket => bucket.key),
       datasets: [{
-        label: '# Count',
-        data: myJson.counts,
-        borderWidth: 1
+      	label: 'Task by States',
+    	borderWidth: 1,
+    	data: result.map(bucket => bucket.count)
       }]
     },
     options: {
