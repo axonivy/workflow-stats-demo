@@ -14,7 +14,7 @@
         <h2>All tasks by state (Primefaces + Java)</h2>
         <p:barChart model="#{chartView.tasksByState}"></p:barChart>
         
-        <h2>All tasks by month by state (Primefaces + Java)</h2>
+        <h2>All tasks by hour by state (Primefaces + Java)</h2>
          <p:barChart model="#{chartView.tasksByMonthAndState}"></p:barChart>
         
 
@@ -55,7 +55,6 @@ userAction();
 
   
 </script>
-        </p:panelGrid>
         <br />
         <div class="command-btns">
           <p:commandLink id="cancel" actionListener="#{ivyWorkflowView.cancel()}" value="Cancel" />
