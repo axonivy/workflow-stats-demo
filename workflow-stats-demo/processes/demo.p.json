@@ -1,5 +1,5 @@
 {
-  "format" : "11.1.1",
+  "format" : "11.1.7",
   "id" : "185813D1EA9214FE",
   "config" : {
     "data" : "com.axonivy.demo.workflow.stats.Data"
@@ -10,7 +10,8 @@
       "name" : "start.ivp",
       "config" : {
         "callSignature" : "start",
-        "outLink" : "start.ivp"
+        "outLink" : "start.ivp",
+        "startName" : "Charts"
       },
       "visual" : {
         "at" : { "x" : 96, "y" : 64 }
@@ -27,12 +28,49 @@
       "type" : "DialogCall",
       "name" : "WorkflowStatsDemo",
       "config" : {
-        "dialogId" : "com.axonivy.demo.workflow.stats.WorkflowStatsDemo",
-        "startMethod" : "start()"
+        "dialog" : "com.axonivy.demo.workflow.stats.WorkflowStatsDemo:start()"
       },
       "visual" : {
         "at" : { "x" : 224, "y" : 64 }
       },
       "connect" : { "id" : "f2", "to" : "f1" }
+    }, {
+      "id" : "f5",
+      "type" : "RequestStart",
+      "name" : "start2.ivp",
+      "config" : {
+        "callSignature" : "start2",
+        "outLink" : "start2.ivp",
+        "startName" : "Create Tasks"
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 208 }
+      },
+      "connect" : { "id" : "f7", "to" : "f6", "var" : "in1" }
+    }, {
+      "id" : "f6",
+      "type" : "TaskSwitchGateway",
+      "config" : {
+        "outLinks" : [ "TaskA.ivp", "TaskB.ivp" ]
+      },
+      "visual" : {
+        "at" : { "x" : 224, "y" : 208 }
+      },
+      "connect" : [
+        { "id" : "f9", "to" : "f8", "condition" : "ivp==\"TaskA.ivp\"" },
+        { "id" : "f11", "to" : "f10", "condition" : "ivp==\"TaskB.ivp\"" }
+      ]
+    }, {
+      "id" : "f8",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 352, "y" : 208 }
+      }
+    }, {
+      "id" : "f10",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 352, "y" : 152 }
+      }
     } ]
 }

@@ -1,7 +1,8 @@
 package com.axonivy.demo.workflow.stats;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
 
@@ -9,94 +10,88 @@ import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.bar.BarChartDataSet;
 import org.primefaces.model.charts.bar.BarChartModel;
 
+import ch.ivyteam.ivy.elasticsearch.client.agg.AggOperator;
+import ch.ivyteam.ivy.elasticsearch.client.agg.AggregationQuery;
+import ch.ivyteam.ivy.elasticsearch.client.agg.Bucket;
+import ch.ivyteam.ivy.elasticsearch.client.agg.Operator.DateBucketOperator.Interval;
+import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.security.ISecurityContext;
-import ch.ivyteam.ivy.workflow.internal.stats.task.TaskByStateResultImpl;
 import ch.ivyteam.ivy.workflow.stats.WorkflowStats;
 import ch.ivyteam.ivy.workflow.task.TaskBusinessState;
 
-@SuppressWarnings("restriction")
 @ManagedBean
 public class ChartView {
 
+	private static final Map<TaskBusinessState, String> COLORS = Map.of(
+		TaskBusinessState.OPEN, "rgb(255, 205, 86)",
+		TaskBusinessState.IN_PROGRESS, "rgb(54, 162, 235)",
+		TaskBusinessState.DONE, "rgb(105, 165, 131)",
+		TaskBusinessState.DESTROYED, "rgb(240, 168, 76)",
+		TaskBusinessState.ERROR, "rgb(255, 99, 132)",
+		TaskBusinessState.DELAYED, "rgb(173, 116, 96)");
+
+
 	public BarChartModel getTasksByState() {
-		var model = new BarChartModel();
-		var data = new ChartData();
-
 		var stats = WorkflowStats.of(ISecurityContext.current());
-		var result = stats.task().byState();
-
+		var query = AggregationQuery.create().agg(AggOperator.stringBuckets("state")).toAggregationQuery();
+		var result = stats.task().aggregate(query);
+		var buckets = result.aggs().get("state");
+		
 		var barDataSet = new BarChartDataSet();
 		barDataSet.setLabel("Task by states");
 
-		var counts = new ArrayList<Number>();
-		var labels = new ArrayList<String>();
-		for (var entry : result.get().entrySet()) {
-			counts.add(entry.getValue());
-			labels.add(entry.getKey().toString());
+		if (buckets != null) {
+			var counts = buckets.stream().map(Bucket.class::cast).map(Bucket::count).map(Number.class::cast).toList();
+			barDataSet.setData(counts);
 		}
-		barDataSet.setData(counts);
-		data.setLabels(labels);
+
+		var data = new ChartData();
+		if (buckets != null) {
+			var labels = buckets.stream().map(Bucket.class::cast).map(Bucket::key).toList();
+			data.setLabels(labels);
+		}
 		data.addChartDataSet(barDataSet);
+		
+		var model = new BarChartModel();
 		model.setData(data);
 		return model;
 	}
 
 	public BarChartModel getTasksByMonthAndState() {
-		var model = new BarChartModel();
-		var data = new ChartData();
-
 		var stats = WorkflowStats.of(ISecurityContext.current());
-		var result = stats.task().byMonthAndState();
+		var query = AggregationQuery.create().agg(AggOperator.dateBuckets("startedAt", Interval.HOUR, AggOperator.stringBuckets("state"))).toAggregationQuery();
+		var result = stats.task().aggregate(query);
+		var buckets = result.aggs().get("startedAt");
+		Ivy.log().info(result.aggs());
 
-		var m = new HashMap<TaskBusinessState, Long>();
-		m.put(TaskBusinessState.OPEN, 10L);
-		m.put(TaskBusinessState.IN_PROGRESS, 4L);
-		m.put(TaskBusinessState.DONE, 14L);
-		m.put(TaskBusinessState.DESTROYED, 2L);
-		m.put(TaskBusinessState.ERROR, 1L);
-		m.put(TaskBusinessState.DELAYED, 4L);
-		result.get().put("2023-02", new TaskByStateResultImpl(m));
-
-		m = new HashMap<TaskBusinessState, Long>();
-		m.put(TaskBusinessState.OPEN, 50L);
-		m.put(TaskBusinessState.IN_PROGRESS, 5L);
-		m.put(TaskBusinessState.DONE, 44L);
-		m.put(TaskBusinessState.DESTROYED, 2L);
-		m.put(TaskBusinessState.ERROR, 1L);
-		m.put(TaskBusinessState.DELAYED, 4L);
-		result.get().put("2023-03", new TaskByStateResultImpl(m));
-
-		var colors = new HashMap<>();
-		colors.put(TaskBusinessState.OPEN, "rgb(255, 205, 86)");
-		colors.put(TaskBusinessState.IN_PROGRESS, "rgb(54, 162, 235)");
-		colors.put(TaskBusinessState.DONE, "rgb(105, 165, 131)");
-		colors.put(TaskBusinessState.DESTROYED, "rgb(240, 168, 76)");
-		colors.put(TaskBusinessState.ERROR, "rgb(255, 99, 132)");
-		colors.put(TaskBusinessState.DELAYED, "rgb(173, 116, 96)");
-
-		for (var states : TaskBusinessState.values()) {
+		var data = new ChartData();
+		for (var state : TaskBusinessState.values()) {
 			var barDataSet = new BarChartDataSet();
-			barDataSet.setLabel(states.name());
-
+			barDataSet.setLabel(state.name());
+			barDataSet.setBackgroundColor(COLORS.get(state));
 			var counts = new ArrayList<Number>();
-
-			for (var entry : result.get().entrySet()) {
-				var map = entry.getValue().get();
-				var st = map.getOrDefault(states, 0L);
-				counts.add(st);
+			if (buckets != null) {
+				for (var bucket : buckets.stream().map(Bucket.class::cast).toList()) {
+					var count = bucket.aggs().get("state")
+						.stream()
+						.map(Bucket.class::cast)
+						.filter(b -> b.key().equals(state.name()))
+						.map(Bucket::count)
+						.map(Number.class::cast)
+						.findAny()
+						.orElse(0);
+					counts.add(count);
+				}
 			}
-
-			barDataSet.setBackgroundColor(colors.get(states));
-
 			barDataSet.setData(counts);
 			data.addChartDataSet(barDataSet);
 		}
-
-		var labels = new ArrayList<String>();
-		for (var entry : result.get().entrySet()) {
-			labels.add(entry.getKey().toString());
+		List<String> labels = List.of();
+		if (buckets != null) {
+			labels = buckets.stream().map(Bucket.class::cast).map(Bucket::key).toList();
 		}
 		data.setLabels(labels);
+		var model = new BarChartModel();
 		model.setData(data);
 		return model;
 	}
