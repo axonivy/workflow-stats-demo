@@ -1,0 +1,107 @@
+{
+  "format" : "11.1.7",
+  "id" : "1865A7CE786CCC3B",
+  "config" : {
+    "data" : "com.axonivy.demo.workflow.stats.Data"
+  },
+  "elements" : [ {
+      "id" : "f5",
+      "type" : "RequestStart",
+      "name" : "start1.ivp",
+      "config" : {
+        "callSignature" : "start1",
+        "outLink" : "start1.ivp",
+        "startDescription" : "Creates the necessary demo data",
+        "input" : {
+          "code" : [
+            "import java.util.Random;",
+            "Random random = new Random();",
+            "out.totalPriceGold = random.nextDouble(200.0);",
+            "out.totalPriceSilver = random.nextDouble(100.0);"
+          ]
+        },
+        "startName" : "Create Demo Data"
+      },
+      "visual" : {
+        "at" : { "x" : 72, "y" : 144 }
+      },
+      "connect" : { "id" : "f7", "to" : "f6", "var" : "in1" }
+    }, {
+      "id" : "f6",
+      "type" : "TaskSwitchGateway",
+      "config" : {
+        "outLinks" : [ "TaskA.ivp", "TaskB.ivp", "TaskC.ivp" ],
+        "tasks" : {
+          "TaskA" : {
+            "customFields" : [
+              { "name" : "customerStatus", "type" : "STRING", "value" : "\"GOLD\"" },
+              { "name" : "totalPrice", "type" : "NUMBER", "value" : "in1.totalPriceGold" }
+            ]
+          },
+          "TaskB" : {
+            "customFields" : [
+              { "name" : "customerStatus", "type" : "STRING", "value" : "\"SILVER\"" },
+              { "name" : "totalPrice", "type" : "NUMBER", "value" : "in1.totalPriceSilver" }
+            ]
+          },
+          "TaskC" : {
+            "responsible" : {
+              "activator" : "SYSTEM"
+            }
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 208, "y" : 144 }
+      },
+      "connect" : [
+        { "id" : "f14", "to" : "f13", "condition" : "ivp==\"TaskA.ivp\"" },
+        { "id" : "f12", "to" : "f4", "via" : [ { "x" : 208, "y" : 48 } ], "condition" : "ivp==\"TaskB.ivp\"" },
+        { "id" : "f3", "to" : "f2", "via" : [ { "x" : 208, "y" : 240 } ], "condition" : "ivp==\"TaskC.ivp\"" }
+      ]
+    }, {
+      "id" : "f8",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 464, "y" : 144 }
+      }
+    }, {
+      "id" : "f10",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 464, "y" : 48 }
+      }
+    }, {
+      "id" : "f0",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 472, "y" : 240 }
+      }
+    }, {
+      "id" : "f2",
+      "type" : "Script",
+      "config" : {
+        "output" : {
+          "code" : "0/0;"
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 328, "y" : 240 }
+      },
+      "connect" : { "id" : "f1", "to" : "f0" }
+    }, {
+      "id" : "f4",
+      "type" : "DialogCall",
+      "visual" : {
+        "at" : { "x" : 328, "y" : 48 }
+      },
+      "connect" : { "id" : "f11", "to" : "f10" }
+    }, {
+      "id" : "f13",
+      "type" : "DialogCall",
+      "visual" : {
+        "at" : { "x" : 328, "y" : 144 }
+      },
+      "connect" : { "id" : "f9", "to" : "f8" }
+    } ]
+}

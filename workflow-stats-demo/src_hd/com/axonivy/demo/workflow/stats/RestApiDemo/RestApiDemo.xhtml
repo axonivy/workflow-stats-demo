@@ -1,0 +1,144 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:ic="http://ivyteam.ch/jsf/component"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:pe="http://primefaces.org/ui/extensions">
+<h:body>
+  <ui:composition template="/layouts/frame-10.xhtml">
+    <ui:define name="title">ChartJS and REST Workflow Statistic API Demo</ui:define>
+    <ui:define name="content">
+
+      <!-- Loads the ChartJs library needed to render the chart -->
+      <h:outputScript library="primefaces" name="chartjs/chartjs.js" />
+
+      <h:form id="form">
+        <p:messages />
+
+        <h1>ChartJS and REST Workflow Statistic API Demo</h1>
+        
+        <h2>All tasks by state</h2>
+        <div>
+          <!-- Placeholder to render the Chart chart1 into it -->
+          <canvas id="chart1" style="height: 200px;"></canvas>
+        </div>
+
+        <h2>All tasks by hour and by state</h2>
+        <div>
+          <!-- Placeholder to render the Chart chart2 into it -->
+          <canvas id="chart2" style="height: 200px;"></canvas>
+        </div>
+
+        <script>
+  
+const chart1 = document.getElementById('chart1');
+const userActionChart1 = async () => {
+  var basePath = window.location.pathname;
+  basePath = basePath.substring(0, basePath.indexOf('/faces/')); 
+  const response = await fetch(basePath+'/api/workflow/tasks/stats?agg=state:bucket');  
+  const result = await response.json();  
+
+  new Chart(chart1, {
+    type: 'bar',
+    data: {
+      labels: result.map(bucket => bucket.key),
+      datasets: [{
+        label: 'Task by States',
+        borderWidth: 1,
+        data: result.map(bucket => bucket.count)
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            text: 'Tasks',
+            display: true
+          }
+        },
+        x: {
+          title: {
+            text: 'States',
+            display: true
+          }
+        }
+      }
+    }
+  });
+}
+ 
+const chart2 = document.getElementById('chart2');
+const userActionChart2 = async () => {
+  var basePath = window.location.pathname;
+  basePath = basePath.substring(0, basePath.indexOf('/faces/')); 
+  const response = await fetch(basePath + '/api/workflow/tasks/stats?agg=startTimeStamp:bucket:hour,state');  
+  const result = await response.json();
+  console.log(result);  
+  console.log(result.map(bucket => bucket.aggs.find(a => a.key === 'IN_PROGRESS')).map(a => a === undefined ? 0 : a.count));
+  new Chart(chart2, {
+    type: 'bar',
+    data: {
+      labels: result.map(bucket => bucket.key),
+      datasets: [{
+          label: 'OPEN',
+          borderWidth: 1,
+          backgroundColor: 'gray',
+          data: result.map(bucket => bucket.aggs.filter(a => a.key === 'OPEN')[0]).map(a => a === undefined ? 0 : a.count)
+        },
+        {
+          label: 'IN_PROGRESS',
+          borderWidth: 1,
+          backgroundColor: 'blue',
+          data: result.map(bucket => bucket.aggs.filter(a => a.key === 'IN_PROGRESS')[0]).map(a => a === undefined ? 0 : a.count)
+        },
+        {
+          label: 'DONE',
+          borderWidth: 1,
+          backgroundColor: 'green',
+          data: result.map(bucket => bucket.aggs.filter(a => a.key === 'DONE')[0]).map(a => a === undefined ? 0 : a.count)
+        },
+        {
+          label: 'ERROR',
+          borderWidth: 1,
+          backgroundColor: 'red',
+          data: result.map(bucket => bucket.aggs.filter(a => a.key === 'ERROR')[0]).map(a => a === undefined ? 0 : a.count)
+        }
+      ]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            text: 'Tasks',
+            display: true
+          }
+        },
+        x: {
+          title: {
+            text: 'Hour',
+            display: true
+          }
+        }
+      }
+    }
+  });
+}
+ 
+userActionChart1();
+userActionChart2();
+          </script>
+        <div class="command-btns">
+          <p:commandLink id="cancel"
+            actionListener="#{ivyWorkflowView.cancel()}" value="Cancel" />
+          <p:commandButton id="proceed" actionListener="#{logic.close}"
+            value="Proceed" update="form" icon="pi pi-check" />
+        </div>
+      </h:form>
+
+    </ui:define>
+  </ui:composition>
+</h:body>
+</html>
