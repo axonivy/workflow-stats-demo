@@ -36,7 +36,9 @@ const chart1 = document.getElementById('chart1');
 const userActionChart1 = async () => {
   var basePath = window.location.pathname;
   basePath = basePath.substring(0, basePath.indexOf('/faces/')); 
-  const response = await fetch(basePath+'/api/workflow/tasks/stats?agg=state:bucket');  
+  
+  // Calls the Workflow Statistic REST API to aggregate states
+  const response = await fetch(basePath+'/api/workflow/tasks/stats?agg=state');  
   const result = await response.json();  
 
   new Chart(chart1, {
@@ -73,10 +75,10 @@ const chart2 = document.getElementById('chart2');
 const userActionChart2 = async () => {
   var basePath = window.location.pathname;
   basePath = basePath.substring(0, basePath.indexOf('/faces/')); 
+  
+  // Calls the Workflow Statistic REST API to aggregate startTimeStamps by hour and state 
   const response = await fetch(basePath + '/api/workflow/tasks/stats?agg=startTimeStamp:bucket:hour,state');  
   const result = await response.json();
-  console.log(result);  
-  console.log(result.map(bucket => bucket.aggs.find(a => a.key === 'IN_PROGRESS')).map(a => a === undefined ? 0 : a.count));
   new Chart(chart2, {
     type: 'bar',
     data: {
@@ -85,25 +87,25 @@ const userActionChart2 = async () => {
           label: 'OPEN',
           borderWidth: 1,
           backgroundColor: 'gray',
-          data: result.map(bucket => bucket.aggs.filter(a => a.key === 'OPEN')[0]).map(a => a === undefined ? 0 : a.count)
+          data: result.map(bucket => bucket.aggs.find(a => a.key === 'OPEN')).map(a => a === undefined ? 0 : a.count)
         },
         {
           label: 'IN_PROGRESS',
           borderWidth: 1,
           backgroundColor: 'blue',
-          data: result.map(bucket => bucket.aggs.filter(a => a.key === 'IN_PROGRESS')[0]).map(a => a === undefined ? 0 : a.count)
+          data: result.map(bucket => bucket.aggs.find(a => a.key === 'IN_PROGRESS')).map(a => a === undefined ? 0 : a.count)
         },
         {
           label: 'DONE',
           borderWidth: 1,
           backgroundColor: 'green',
-          data: result.map(bucket => bucket.aggs.filter(a => a.key === 'DONE')[0]).map(a => a === undefined ? 0 : a.count)
+          data: result.map(bucket => bucket.aggs.find(a => a.key === 'DONE')).map(a => a === undefined ? 0 : a.count)
         },
         {
           label: 'ERROR',
           borderWidth: 1,
           backgroundColor: 'red',
-          data: result.map(bucket => bucket.aggs.filter(a => a.key === 'ERROR')[0]).map(a => a === undefined ? 0 : a.count)
+          data: result.map(bucket => bucket.aggs.find(a => a.key === 'ERROR')).map(a => a === undefined ? 0 : a.count)
         }
       ]
     },
