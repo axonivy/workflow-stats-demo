@@ -3,7 +3,7 @@
   "id" : "185813E865ADEEA6",
   "kind" : "HTML_DIALOG",
   "config" : {
-    "data" : "com.axonivy.demo.workflow.stats.WorkflowStatsDemo.WorkflowStatsDemoData"
+    "data" : "com.axonivy.demo.workflow.stats.RestApiDemo.RestApiDemoData"
   },
   "elements" : [ {
       "id" : "f0",

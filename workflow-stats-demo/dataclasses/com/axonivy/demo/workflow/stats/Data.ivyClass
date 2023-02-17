@@ -1,2 +1,6 @@
 Data #class
 com.axonivy.demo.workflow.stats #namespace
+totalPriceGold Number #field
+totalPriceGold PERSISTENT #fieldModifier
+totalPriceSilver Number #field
+totalPriceSilver PERSISTENT #fieldModifier
