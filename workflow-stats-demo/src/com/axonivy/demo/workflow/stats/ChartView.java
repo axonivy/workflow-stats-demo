@@ -55,10 +55,10 @@ public class ChartView {
   public BarChartModel getTasksByMonthAndState() {
     var stats = WorkflowStats.of(ISecurityContext.current());
     var query = AggregationQuery.create()
-            .agg(AggOperator.dateBuckets("startedAt", Interval.HOUR, AggOperator.stringBuckets("state")))
+            .agg(AggOperator.dateBuckets("startTimestamp", Interval.YEAR, AggOperator.stringBuckets("businessState")))
             .toAggregationQuery();
     var result = stats.task().aggregate(query);
-    var buckets = result.aggs().get("startedAt");
+    var buckets = result.aggs().get("startTimestamp");
     var data = new ChartData();
     for (var state : TaskBusinessState.values()) {
       var barDataSet = new BarChartDataSet();
@@ -67,7 +67,7 @@ public class ChartView {
       var counts = new ArrayList<Number>();
       if (buckets != null) {
         for (var bucket : buckets.stream().map(Bucket.class::cast).toList()) {
-          var count = bucket.aggs().get("state")
+          var count = bucket.aggs().get("businessState")
                   .stream()
                   .map(Bucket.class::cast)
                   .filter(b -> b.key().equals(state.name()))
@@ -81,7 +81,7 @@ public class ChartView {
       barDataSet.setData(counts);
       data.addChartDataSet(barDataSet);
     }
-    List<String> labels = List.of();
+    var labels = List.of();
     if (buckets != null) {
       labels = buckets.stream().map(Bucket.class::cast).map(Bucket::key).toList();
     }

@@ -77,7 +77,7 @@ const userActionChart2 = async () => {
   basePath = basePath.substring(0, basePath.indexOf('/faces/')); 
   
   // Calls the Workflow Statistic REST API to aggregate startTimeStamps by hour and state 
-  const response = await fetch(basePath + '/api/workflow/tasks/stats?agg=startTimeStamp:bucket:hour,state');  
+  const response = await fetch(basePath + '/api/workflow/tasks/stats?agg=startTimestamp:bucket:day,businessState');
   const result = await response.json();
   new Chart(chart2, {
     type: 'bar',
@@ -87,25 +87,25 @@ const userActionChart2 = async () => {
           label: 'OPEN',
           borderWidth: 1,
           backgroundColor: 'gray',
-          data: result.map(bucket => bucket.aggs.find(a => a.key === 'OPEN')).map(a => a === undefined ? 0 : a.count)
+          data: getStateCount(result, 'OPEN')
         },
         {
           label: 'IN_PROGRESS',
           borderWidth: 1,
           backgroundColor: 'blue',
-          data: result.map(bucket => bucket.aggs.find(a => a.key === 'IN_PROGRESS')).map(a => a === undefined ? 0 : a.count)
+          data: getStateCount(result,'IN_PROGRESS')
         },
         {
           label: 'DONE',
           borderWidth: 1,
           backgroundColor: 'green',
-          data: result.map(bucket => bucket.aggs.find(a => a.key === 'DONE')).map(a => a === undefined ? 0 : a.count)
+          data: getStateCount(result,'DONE')
         },
         {
           label: 'ERROR',
           borderWidth: 1,
           backgroundColor: 'red',
-          data: result.map(bucket => bucket.aggs.find(a => a.key === 'ERROR')).map(a => a === undefined ? 0 : a.count)
+          data: getStateCount(result,'ERROR')
         }
       ]
     },
@@ -127,6 +127,12 @@ const userActionChart2 = async () => {
       }
     }
   });
+}
+
+function getStateCount(result, state) {
+	let aggs = result.map(bucket => bucket.count > 0 ? bucket.aggs.find(a => a.key === state) : undefined);
+	let stateCount = aggs.map(a => a === undefined ? 0 : a.count)
+	return stateCount;
 }
  
 userActionChart1();
