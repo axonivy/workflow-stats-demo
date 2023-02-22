@@ -16,7 +16,7 @@
         <h:form id="form">
           <p:messages />
           
-          <h1>Custom Field Demo</h1>
+          <h1>Task Custom Field Demo</h1>
   
           <h2>Average Total Price per Customer Status</h2>
           <div>
@@ -30,7 +30,7 @@ const userAction = async () => {
   var basePath = window.location.pathname;
   basePath = basePath.substring(0, basePath.indexOf('/faces/')); 
   
-  // Calls the Workflow Statistic REST API to aggregate custom fields customerStatus with average of totalPrice 
+  // Calls the Workflow Task Statistic REST API to aggregate custom fields customerStatus with average of totalPrice 
   const response = await fetch(basePath + '/api/workflow/tasks/stats?agg=customFields.strings.customerStatus,customFields.numbers.totalPrice:avg');  
   const result = await response.json();  
   new Chart(customerChart, {

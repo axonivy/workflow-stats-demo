@@ -1,9 +1,9 @@
 {
   "format" : "11.1.1",
-  "id" : "185813E865ADEEA6",
+  "id" : "18678B5C702699C6",
   "kind" : "HTML_DIALOG",
   "config" : {
-    "data" : "com.axonivy.demo.workflow.stats.RestApiDemo.RestApiDemoData"
+    "data" : "com.axonivy.demo.workflow.stats.caze.RestApiDemo.RestApiDemoData"
   },
   "elements" : [ {
       "id" : "f0",
