@@ -141,7 +141,7 @@ const userActionChart3 = async () => {
   basePath = basePath.substring(0, basePath.indexOf('/faces/')); 
   
   // Calls the Workflow Statistic REST API to aggregate startTimeStamps by hour and state 
-  const response = await fetch(basePath + '/api/workflow/tasks/stats?agg=startTimestamp:bucket:day,businessState&amp;filter=businessState:OPEN DONE');
+  const response = await fetch(basePath + '/api/workflow/tasks/stats?agg=startTimestamp:bucket:hour,businessState&amp;filter=businessState:OPEN DONE');
   const result = await response.json();
   new Chart(chart3, {
     type: 'bar',
