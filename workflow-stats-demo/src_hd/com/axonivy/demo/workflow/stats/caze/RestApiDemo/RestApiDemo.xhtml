@@ -30,7 +30,7 @@
           <canvas id="chart2" style="height: 200px;"></canvas>
         </div>
 
-		<h2>Only OPEN and DONE cases by hour and by state</h2>
+        <h2>Only OPEN and DONE cases by hour and by state</h2>
         <div>
           <!-- Placeholder to render the Chart chart2 into it -->
           <canvas id="chart3" style="height: 200px;"></canvas>
@@ -176,9 +176,9 @@ const userActionChart3 = async () => {
 }
 
 function getStateCount(result, state) {
-	let aggs = result.map(bucket => bucket.count > 0 ? bucket.aggs.find(a => a.key === state) : undefined);
-	let stateCount = aggs.map(a => a === undefined ? 0 : a.count)
-	return stateCount;
+    let aggs = result.map(bucket => bucket.count > 0 ? bucket.aggs.find(a => a.key === state) : undefined);
+    let stateCount = aggs.map(a => a === undefined ? 0 : a.count)
+    return stateCount;
 }
  
 userActionChart1();
