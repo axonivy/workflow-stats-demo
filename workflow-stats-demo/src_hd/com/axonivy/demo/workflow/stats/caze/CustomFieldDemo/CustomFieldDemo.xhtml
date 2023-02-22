@@ -1,0 +1,78 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:ic="http://ivyteam.ch/jsf/component"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:pe="http://primefaces.org/ui/extensions">
+  <h:body>
+    <ui:composition template="/layouts/frame-10.xhtml">
+      <ui:define name="title">Custom Field Demo</ui:define>
+      <ui:define name="content">
+   
+        <!-- Loads the ChartJs library needed to render the chart -->
+        <h:outputScript library="primefaces" name="chartjs/chartjs.js"/>
+        
+        <h:form id="form">
+          <p:messages />
+          
+          <h1>Case Custom Field Demo</h1>
+  
+          <h2>Average Total Price per Customer Status</h2>
+          <div>
+            <!-- Placeholder to render the Chart into it -->
+            <canvas id="customer" style="height: 200px;"></canvas>
+          </div>
+  
+          <script>
+const customerChart = document.getElementById('customer');
+const userAction = async () => {
+  var basePath = window.location.pathname;
+  basePath = basePath.substring(0, basePath.indexOf('/faces/')); 
+  
+  // Calls the Workflow Case Statistic REST API to aggregate custom fields customerStatus with average of totalPrice 
+  const response = await fetch(basePath + '/api/workflow/cases/stats?agg=customFields.strings.customerStatus,customFields.numbers.totalPrice:avg');  
+  const result = await response.json();  
+  new Chart(customerChart, {
+      type: 'bar',
+      data: {
+        labels: result.map(bucket => bucket.key),
+        datasets: [{
+          label: 'Average Total Price per Customer Status',
+        borderWidth: 1,
+        data: result.map(bucket => bucket.aggs[0].value)
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              text: 'Price [€]',
+              display: true
+            }
+          },
+          x: {
+            title: {
+              text: 'Customer Status',
+              display: true
+            }
+          }
+        }
+      }
+  });
+}
+  
+userAction();
+          </script>
+          <div class="command-btns">
+            <p:commandLink id="cancel"
+              actionListener="#{ivyWorkflowView.cancel()}" value="Cancel" />
+            <p:commandButton id="proceed" actionListener="#{logic.close}"
+              value="Proceed" update="form" icon="pi pi-check" />
+          </div>
+        </h:form>
+      </ui:define>
+    </ui:composition>
+  </h:body>
+</html>

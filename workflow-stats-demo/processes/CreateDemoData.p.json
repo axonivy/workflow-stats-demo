@@ -1,5 +1,5 @@
 {
-  "format" : "11.1.7",
+  "format" : "11.1.9",
   "id" : "1865A7CE786CCC3B",
   "config" : {
     "data" : "com.axonivy.demo.workflow.stats.Data"
@@ -31,6 +31,12 @@
       "type" : "TaskSwitchGateway",
       "config" : {
         "outLinks" : [ "TaskA.ivp", "TaskB.ivp", "TaskC.ivp" ],
+        "case" : {
+          "customFields" : [
+            { "name" : "customerStatus", "type" : "STRING", "value" : "ivy.case.getId() % 2 == 0 ? \"GOLD\" : \"SILVER\"" },
+            { "name" : "totalPrice", "type" : "NUMBER", "value" : "ivy.case.getId() % 2 == 0 ? in1.totalPriceGold : in1.totalPriceSilver" }
+          ]
+        },
         "tasks" : {
           "TaskA" : {
             "customFields" : [

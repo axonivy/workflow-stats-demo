@@ -1,9 +1,9 @@
 {
   "format" : "11.1.7",
-  "id" : "1865A8956A2469C5",
+  "id" : "18678B5995B384E6",
   "kind" : "HTML_DIALOG",
   "config" : {
-    "data" : "com.axonivy.demo.workflow.stats.CustomFieldDemo.CustomFieldDemoData"
+    "data" : "com.axonivy.demo.workflow.stats.caze.CustomFieldDemo.CustomFieldDemoData"
   },
   "elements" : [ {
       "id" : "f0",
