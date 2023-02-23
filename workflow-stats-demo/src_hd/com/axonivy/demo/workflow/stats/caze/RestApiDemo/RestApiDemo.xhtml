@@ -83,12 +83,12 @@ const userActionChart2 = async () => {
   basePath = basePath.substring(0, basePath.indexOf('/faces/')); 
   
   // Calls the Workflow Case Statistic REST API to aggregate startTimeStamps by hour and state 
-  const response = await fetch(basePath + '/api/workflow/cases/stats?agg=startTimestamp:bucket:day,businessState');
+  const response = await fetch(basePath + '/api/workflow/cases/stats?agg=startTimestamp:bucket:hour,businessState');
   const result = await response.json();
   new Chart(chart2, {
     type: 'bar',
     data: {
-      labels: result.map(bucket => bucket.key),
+      labels: result.map(bucket => toLabel(bucket.key)),
       datasets: [{
           label: 'OPEN',
           borderWidth: 1,
@@ -140,7 +140,7 @@ const userActionChart3 = async () => {
   new Chart(chart3, {
     type: 'bar',
     data: {
-      labels: result.map(bucket => bucket.key),
+      labels: result.map(bucket => toLabel(bucket.key)),
       datasets: [{
           label: 'OPEN',
           borderWidth: 1,
@@ -179,6 +179,11 @@ function getStateCount(result, state) {
     let aggs = result.map(bucket => bucket.count > 0 ? bucket.aggs.find(a => a.key === state) : undefined);
     let stateCount = aggs.map(a => a === undefined ? 0 : a.count)
     return stateCount;
+}
+
+function toLabel(utc) {
+  const date = new Date(utc);
+  return date.toLocaleString(undefined, {year : 'numeric', month: 'short', day: 'numeric', hour: 'numeric'});
 }
  
 userActionChart1();
