@@ -23,10 +23,8 @@
         
         <script>
 const chart1 = document.getElementById('chart1');
+const basePath = window.origin + ('#{ivy.wf.securityContext.name}' === 'default' ? '' : '/#{ivy.wf.securityContext.name}');
 const userActionChart1 = async () => {
-  var basePath = window.location.pathname;
-  basePath = basePath.substring(0, basePath.indexOf('/faces/')); 
-  
   // Calls the Workflow Task Statistic REST API to aggregate startTimestamp
   const response = await fetch(basePath+'/api/workflow/tasks/stats?agg=startTimestamp:bucket:year');  
   const result = await response.json();  
