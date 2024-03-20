@@ -39,10 +39,8 @@
         <script>
   
 const chart1 = document.getElementById('chart1');
+const basePath = window.origin + ('#{ivy.wf.securityContext.name}' === 'default' ? '' : '/#{ivy.wf.securityContext.name}');
 const userActionChart1 = async () => {
-  var basePath = window.location.pathname;
-  basePath = basePath.substring(0, basePath.indexOf('/faces/')); 
-  
   // Calls the Workflow Task Statistic REST API to aggregate states
   const response = await fetch(basePath+'/api/workflow/tasks/stats?agg=state');  
   const result = await response.json();  
@@ -79,9 +77,6 @@ const userActionChart1 = async () => {
  
 const chart2 = document.getElementById('chart2');
 const userActionChart2 = async () => {
-  var basePath = window.location.pathname;
-  basePath = basePath.substring(0, basePath.indexOf('/faces/')); 
-  
   // Calls the Workflow Task Statistic REST API to aggregate startTimeStamps by hour and state 
   const response = await fetch(basePath + '/api/workflow/tasks/stats?agg=startTimestamp:bucket:hour,businessState');
   const result = await response.json();
@@ -137,9 +132,6 @@ const userActionChart2 = async () => {
 
 const chart3 = document.getElementById('chart3');
 const userActionChart3 = async () => {
-  var basePath = window.location.pathname;
-  basePath = basePath.substring(0, basePath.indexOf('/faces/')); 
-  
   // Calls the Workflow Task Statistic REST API to aggregate startTimeStamps by hour and state 
   const response = await fetch(basePath + '/api/workflow/tasks/stats?agg=startTimestamp:bucket:hour,businessState&amp;filter=businessState:OPEN DONE');
   const result = await response.json();

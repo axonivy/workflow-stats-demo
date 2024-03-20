@@ -26,10 +26,8 @@
   
           <script>
 const customerChart = document.getElementById('customer');
+const basePath = window.origin + ('#{ivy.wf.securityContext.name}' === 'default' ? '' : '/#{ivy.wf.securityContext.name}');
 const userAction = async () => {
-  var basePath = window.location.pathname;
-  basePath = basePath.substring(0, basePath.indexOf('/faces/')); 
-  
   // Calls the Workflow Task Statistic REST API to aggregate custom fields customerStatus with average of totalPrice 
   const response = await fetch(basePath + '/api/workflow/tasks/stats?agg=customFields.strings.customerStatus,customFields.numbers.totalPrice:avg');  
   const result = await response.json();  
