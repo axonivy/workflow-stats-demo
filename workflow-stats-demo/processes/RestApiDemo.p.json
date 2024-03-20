@@ -1,5 +1,5 @@
 {
-  "format" : "11.1.9",
+  "$schema" : "https://json-schema.axonivy.com/process/11.2.2/process.json",
   "id" : "185813D1EA9214FE",
   "config" : {
     "data" : "com.axonivy.demo.workflow.stats.Data"
@@ -9,15 +9,18 @@
       "type" : "RequestStart",
       "name" : "task.ivp",
       "config" : {
-        "callSignature" : "task",
-        "outLink" : "task.ivp",
-        "startDescription" : "Demonstrates how to use the Task REST API with Primefaces Charts",
-        "startName" : "Task REST API Demo"
+        "signature" : "task",
+        "request" : {
+          "name" : "Task REST API Demo",
+          "description" : "Demonstrates how to use the Task REST API with Primefaces Charts"
+        }
       },
       "visual" : {
         "at" : { "x" : 96, "y" : 64 }
       },
-      "connect" : { "id" : "f4", "to" : "f3" }
+      "connect" : [
+        { "id" : "f4", "to" : "f3" }
+      ]
     }, {
       "id" : "f1",
       "type" : "TaskEnd",
@@ -34,21 +37,26 @@
       "visual" : {
         "at" : { "x" : 224, "y" : 64 }
       },
-      "connect" : { "id" : "f2", "to" : "f1" }
+      "connect" : [
+        { "id" : "f2", "to" : "f1" }
+      ]
     }, {
       "id" : "f5",
       "type" : "RequestStart",
       "name" : "case.ivp",
       "config" : {
-        "callSignature" : "case",
-        "outLink" : "case.ivp",
-        "startDescription" : "Demonstrates how to use the Case REST API with Primefaces Charts",
-        "startName" : "Case REST API Demo"
+        "signature" : "case",
+        "request" : {
+          "name" : "Case REST API Demo",
+          "description" : "Demonstrates how to use the Case REST API with Primefaces Charts"
+        }
       },
       "visual" : {
         "at" : { "x" : 96, "y" : 160 }
       },
-      "connect" : { "id" : "f9", "to" : "f7" }
+      "connect" : [
+        { "id" : "f9", "to" : "f7" }
+      ]
     }, {
       "id" : "f6",
       "type" : "TaskEnd",
@@ -65,6 +73,8 @@
       "visual" : {
         "at" : { "x" : 224, "y" : 160 }
       },
-      "connect" : { "id" : "f8", "to" : "f6" }
+      "connect" : [
+        { "id" : "f8", "to" : "f6" }
+      ]
     } ]
 }

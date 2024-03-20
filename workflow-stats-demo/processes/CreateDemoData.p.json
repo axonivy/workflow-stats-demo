@@ -1,5 +1,5 @@
 {
-  "format" : "11.1.9",
+  "$schema" : "https://json-schema.axonivy.com/process/11.2.2/process.json",
   "id" : "1865A7CE786CCC3B",
   "config" : {
     "data" : "com.axonivy.demo.workflow.stats.Data"
@@ -9,10 +9,9 @@
       "type" : "RequestStart",
       "name" : "start1.ivp",
       "config" : {
-        "callSignature" : "start1",
-        "outLink" : "start1.ivp",
-        "startDescription" : "Creates the necessary demo data",
+        "signature" : "start1",
         "input" : {
+          "map" : { },
           "code" : [
             "import java.util.Random;",
             "Random random = new Random();",
@@ -20,41 +19,44 @@
             "out.totalPriceSilver = random.nextDouble(100.0);"
           ]
         },
-        "startName" : "Create Demo Data"
+        "request" : {
+          "name" : "Create Demo Data",
+          "description" : "Creates the necessary demo data"
+        }
       },
       "visual" : {
         "at" : { "x" : 72, "y" : 144 }
       },
-      "connect" : { "id" : "f7", "to" : "f6", "var" : "in1" }
+      "connect" : [
+        { "id" : "f7", "to" : "f6", "var" : "in1" }
+      ]
     }, {
       "id" : "f6",
       "type" : "TaskSwitchGateway",
       "config" : {
-        "outLinks" : [ "TaskA.ivp", "TaskB.ivp", "TaskC.ivp" ],
+        "tasks" : [ {
+            "id" : "TaskA",
+            "customFields" : [
+              { "name" : "customerStatus", "type" : "STRING", "value" : "\"GOLD\"" },
+              { "name" : "totalPrice", "type" : "NUMBER", "value" : "in1.totalPriceGold" }
+            ]
+          }, {
+            "id" : "TaskB",
+            "customFields" : [
+              { "name" : "customerStatus", "type" : "STRING", "value" : "\"SILVER\"" },
+              { "name" : "totalPrice", "type" : "NUMBER", "value" : "in1.totalPriceSilver" }
+            ]
+          }, {
+            "id" : "TaskC",
+            "responsible" : {
+              "activator" : "SYSTEM"
+            }
+          } ],
         "case" : {
           "customFields" : [
             { "name" : "customerStatus", "type" : "STRING", "value" : "ivy.case.getId() % 2 == 0 ? \"GOLD\" : \"SILVER\"" },
             { "name" : "totalPrice", "type" : "NUMBER", "value" : "ivy.case.getId() % 2 == 0 ? in1.totalPriceGold : in1.totalPriceSilver" }
           ]
-        },
-        "tasks" : {
-          "TaskA" : {
-            "customFields" : [
-              { "name" : "customerStatus", "type" : "STRING", "value" : "\"GOLD\"" },
-              { "name" : "totalPrice", "type" : "NUMBER", "value" : "in1.totalPriceGold" }
-            ]
-          },
-          "TaskB" : {
-            "customFields" : [
-              { "name" : "customerStatus", "type" : "STRING", "value" : "\"SILVER\"" },
-              { "name" : "totalPrice", "type" : "NUMBER", "value" : "in1.totalPriceSilver" }
-            ]
-          },
-          "TaskC" : {
-            "responsible" : {
-              "activator" : "SYSTEM"
-            }
-          }
         }
       },
       "visual" : {
@@ -94,20 +96,26 @@
       "visual" : {
         "at" : { "x" : 328, "y" : 240 }
       },
-      "connect" : { "id" : "f1", "to" : "f0" }
+      "connect" : [
+        { "id" : "f1", "to" : "f0" }
+      ]
     }, {
       "id" : "f4",
       "type" : "DialogCall",
       "visual" : {
         "at" : { "x" : 328, "y" : 48 }
       },
-      "connect" : { "id" : "f11", "to" : "f10" }
+      "connect" : [
+        { "id" : "f11", "to" : "f10" }
+      ]
     }, {
       "id" : "f13",
       "type" : "DialogCall",
       "visual" : {
         "at" : { "x" : 328, "y" : 144 }
       },
-      "connect" : { "id" : "f9", "to" : "f8" }
+      "connect" : [
+        { "id" : "f9", "to" : "f8" }
+      ]
     } ]
 }
