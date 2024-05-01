@@ -1,5 +1,5 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/process/11.2.2/process.json",
+  "$schema" : "https://json-schema.axonivy.com/process/11.3.0/process.json",
   "id" : "1865A7CE786CCC3B",
   "config" : {
     "data" : "com.axonivy.demo.workflow.stats.Data"
@@ -28,7 +28,7 @@
         "at" : { "x" : 72, "y" : 144 }
       },
       "connect" : [
-        { "id" : "f7", "to" : "f6", "var" : "in1" }
+        { "id" : "f7", "to" : "f15" }
       ]
     }, {
       "id" : "f6",
@@ -36,12 +36,19 @@
       "config" : {
         "tasks" : [ {
             "id" : "TaskA",
+            "responsible" : {
+              "activator" : "Manager"
+            },
             "customFields" : [
+              { "name" : "customer", "type" : "STRING", "value" : "ivy.session.getSessionUserName()" },
               { "name" : "customerStatus", "type" : "STRING", "value" : "\"GOLD\"" },
               { "name" : "totalPrice", "type" : "NUMBER", "value" : "in1.totalPriceGold" }
             ]
           }, {
             "id" : "TaskB",
+            "responsible" : {
+              "activator" : "Manager"
+            },
             "customFields" : [
               { "name" : "customerStatus", "type" : "STRING", "value" : "\"SILVER\"" },
               { "name" : "totalPrice", "type" : "NUMBER", "value" : "in1.totalPriceSilver" }
@@ -60,30 +67,30 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 208, "y" : 144 }
+        "at" : { "x" : 328, "y" : 144 }
       },
       "connect" : [
         { "id" : "f14", "to" : "f13", "condition" : "ivp==\"TaskA.ivp\"" },
-        { "id" : "f12", "to" : "f4", "via" : [ { "x" : 208, "y" : 48 } ], "condition" : "ivp==\"TaskB.ivp\"" },
-        { "id" : "f3", "to" : "f2", "via" : [ { "x" : 208, "y" : 240 } ], "condition" : "ivp==\"TaskC.ivp\"" }
+        { "id" : "f12", "to" : "f4", "via" : [ { "x" : 328, "y" : 48 } ], "condition" : "ivp==\"TaskB.ivp\"" },
+        { "id" : "f3", "to" : "f2", "via" : [ { "x" : 328, "y" : 240 } ], "condition" : "ivp==\"TaskC.ivp\"" }
       ]
     }, {
       "id" : "f8",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 464, "y" : 144 }
+        "at" : { "x" : 584, "y" : 144 }
       }
     }, {
       "id" : "f10",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 464, "y" : 48 }
+        "at" : { "x" : 584, "y" : 48 }
       }
     }, {
       "id" : "f0",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 472, "y" : 240 }
+        "at" : { "x" : 592, "y" : 240 }
       }
     }, {
       "id" : "f2",
@@ -94,7 +101,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 328, "y" : 240 }
+        "at" : { "x" : 448, "y" : 240 }
       },
       "connect" : [
         { "id" : "f1", "to" : "f0" }
@@ -103,7 +110,7 @@
       "id" : "f4",
       "type" : "DialogCall",
       "visual" : {
-        "at" : { "x" : 328, "y" : 48 }
+        "at" : { "x" : 448, "y" : 48 }
       },
       "connect" : [
         { "id" : "f11", "to" : "f10" }
@@ -112,10 +119,31 @@
       "id" : "f13",
       "type" : "DialogCall",
       "visual" : {
-        "at" : { "x" : 328, "y" : 144 }
+        "at" : { "x" : 448, "y" : 144 }
       },
       "connect" : [
         { "id" : "f9", "to" : "f8" }
+      ]
+    }, {
+      "id" : "f15",
+      "type" : "Script",
+      "config" : {
+        "output" : {
+          "code" : [
+            "import ch.ivyteam.ivy.security.IUser;",
+            "import ch.ivyteam.ivy.security.IPermission;",
+            "",
+            "IUser user = ivy.security.users().find(\"rwei\");",
+            "ivy.wf.getSecurityContext().securityDescriptor().grantPermission(IPermission.CASE_READ_ALL,user);"
+          ]
+        },
+        "sudo" : true
+      },
+      "visual" : {
+        "at" : { "x" : 200, "y" : 144 }
+      },
+      "connect" : [
+        { "id" : "f16", "to" : "f6", "color" : "default", "var" : "in1" }
       ]
     } ]
 }
