@@ -1,0 +1,12 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/data-class/13.2.0/data-class.json",
+  "simpleName" : "Data",
+  "namespace" : "com.axonivy.demo.workflow.stats",
+  "fields" : [ {
+    "name" : "totalPriceGold",
+    "type" : "Number"
+  }, {
+    "name" : "totalPriceSilver",
+    "type" : "Number"
+  } ]
+}
