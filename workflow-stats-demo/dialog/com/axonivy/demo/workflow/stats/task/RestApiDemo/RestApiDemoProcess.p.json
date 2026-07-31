@@ -1,9 +1,9 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/14.0-dev/project/process.json",
-  "id" : "18678B5C702699C6",
+  "$schema" : "https://json-schema.axonivy.com/14.0-dev/project/process-1.json",
+  "id" : "185813E865ADEEA6",
   "kind" : "HTML_DIALOG",
   "config" : {
-    "data" : "com.axonivy.demo.workflow.stats.caze.RestApiDemo.RestApiDemoData"
+    "data" : "com.axonivy.demo.workflow.stats.task.RestApiDemo.RestApiDemoData"
   },
   "elements" : [ {
       "id" : "f0",
